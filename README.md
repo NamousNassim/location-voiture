@@ -20,7 +20,7 @@ Installation:
 
 ![Main_Page.py](ScreenShots/Main_Page.png)
 ![Login_Page.py](ScreenShots/Login_Page.png)
-![Register_Page.py](ScreenShots/Register_page.png)
+![Register_Page.py](ScreenShots/Register_Page.png)
 ![Home_Page (Rental Button Clicked)](ScreenShots/Home_Page_Rentals.png)
 ![Main_Page_(Home Button Clicked)](ScreenShots/Home_Page(Home).png)
 

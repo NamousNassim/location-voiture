@@ -1,1 +1,0 @@
- nav_bar.pack(side="top", fill="x")

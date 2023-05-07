@@ -32,44 +32,45 @@ class CarCard(tk.Frame):
         rental_window.title("Rental Information")
         rental_window.geometry("300x200")
 
-        start_date_entry = DateEntry(rental_window, width=20, font=('Helvetica', 12))
-        start_date_entry.pack(pady=5)
-        start_date_entry.delete(0, tk.END)
-        start_date_entry.insert(0, datetime.today().strftime('%m/%d/%y'))
+        start_date = datetime.today().date()
 
-        start_date = datetime.strptime(start_date_entry.get(), '%m/%d/%y')
-
-        start_date_entry.delete(0, tk.END)
-        start_date_entry.insert(0, start_date.strftime('%m/%d/%y'))
+        try:
+            start_date_entry = DateEntry(rental_window, width=20, font=('Helvetica', 12), state='readonly')
+            start_date_entry.pack(pady=5)
+            start_date_entry.delete(0, tk.END)
+            start_date_entry.insert(0, start_date.strftime('%Y-%m-%d'))
+        except AttributeError:
+            start_date_entry = ttk.Entry(rental_window, width=20, font=('Helvetica', 12), state='readonly')
+            start_date_entry.pack(pady=5)
+            start_date_entry.insert(0, start_date.strftime('%Y-%m-%d'))
 
         end_date_label = tk.Label(rental_window, text="End Date:", font=('Helvetica', 12))
         end_date_label.pack(pady=5)
 
-        end_date_entry = DateEntry(rental_window, width=12, background='darkblue', foreground='white', borderwidth=2)
+        end_date_entry = DateEntry(rental_window, width=12, background='darkblue', foreground='white', borderwidth=2, year=2023)
         end_date_entry.pack(pady=5)
 
         confirm_btn = ttk.Button(rental_window, text="Confirm", command=lambda: self.confirm_rental(matricule, start_date_entry.get(), end_date_entry.get()))
         confirm_btn.pack(pady=10)
 
     def confirm_rental(self,matricule, start_date_entry, end_date_entry):
-        # if Database.Connection.is_car_reserved(matricule):
-        #     messagebox.showerror("Sorry","Sorry, the selected car is not available for the selected dates.")
+        if Database.Connection.is_car_reserved(matricule):
+            return "Sorry, the selected car is not available for the selected dates."
     
-  
-    
-
+    # Convert start and end dates to datetime objects
         start_date = datetime.strptime(start_date_entry, '%m/%d/%y')
         end_date = datetime.strptime(end_date_entry, '%m/%d/%y')
-        duration = (end_date-start_date).days
-        price_per_day = Database.Connection.get_car_price(matricule)
-        price = (duration+1) * price_per_day
-
-       
     
-        Database.Connection.add_rental(matricule, start_date, end_date,price)
+    # Calculate rental duration and price
+        duration = (end_date - start_date).days
+        price_per_day = Database.Connection.get_car_price(matricule)
+        price = duration * price_per_day
+    
+    # Add rental to the database
+        Database.Connection.add_rental(matricule, start_date, end_date)
         Database.Connection.set_car_reserved(matricule)
     
-        messagebox.showinfo("Confirmation", f"Rental confirmed for car {matricule} from {start_date_entry} to {end_date_entry} for a total price of {price} DH. Thank you for your rental!")
+        messagebox.showinfo("Confirmation", f"Rental confirmed for car {matricule} from {start_date_entry} to {end_date_entry} for a total price of {price}$. Thank you for your rental!")
 
 
 class HomePage(tk.Tk):

@@ -52,12 +52,6 @@ class CarCard(tk.Frame):
         confirm_btn.pack(pady=10)
 
     def confirm_rental(self,matricule, start_date_entry, end_date_entry):
-        # if Database.Connection.is_car_reserved(matricule):
-        #     messagebox.showerror("Sorry","Sorry, the selected car is not available for the selected dates.")
-    
-  
-    
-
         start_date = datetime.strptime(start_date_entry, '%m/%d/%y')
         end_date = datetime.strptime(end_date_entry, '%m/%d/%y')
         duration = (end_date-start_date).days
@@ -71,6 +65,28 @@ class CarCard(tk.Frame):
     
         messagebox.showinfo("Confirmation", f"Rental confirmed for car {matricule} from {start_date_entry} to {end_date_entry} for a total price of {price} DH. Thank you for your rental!")
 
+class Reservation(tk.Frame):
+    def __init__(self, master, rental_info):
+        super().__init__(master, bg='#F0F0F0', bd=1, relief='solid', width=300, height=400)
+
+        self.matricule = rental_info[0]
+        self.start_date = rental_info[1]
+        self.end_date = rental_info[2]
+        self.price = rental_info[3]
+
+        self.model_label = tk.Label(self, text=f"Reservation for Car {self.matricule}", font=('Helvetica', 14, 'bold'), bg='#FFFFFF')
+        self.model_label.grid(row=0, column=0, pady=5)
+
+        start_date_str = self.start_date.strftime('%m/%d/%y')
+        self.start_date_label = tk.Label(self, text=f"Start Date: {start_date_str}", font=('Helvetica', 12), bg='#FFFFFF')
+        self.start_date_label.grid(row=1, column=0, pady=5)
+
+        end_date_str = self.end_date.strftime('%m/%d/%y')
+        self.end_date_label = tk.Label(self, text=f"End Date: {end_date_str}", font=('Helvetica', 12), bg='#FFFFFF')
+        self.end_date_label.grid(row=2, column=0, pady=5)
+
+        self.price_label = tk.Label(self, text=f'Total Price: {self.price} DH', font=('Helvetica', 12), bg='#FFFFFF')
+        self.price_label.grid(row=3, column=0, pady=5)
 
 class HomePage(tk.Tk):
     def __init__(self):
@@ -86,9 +102,9 @@ class HomePage(tk.Tk):
         home_btn = tk.Button(nav_bar, text="Home", bg="#333333", fg="#FFFFFF", bd=0, padx=10, pady=5, state="active", command=lambda: self.load_cars(car_container))
         home_btn.pack(side="left")
 
-        rentals_btn = tk.Button(nav_bar, text="Rentals", bg="#333333", fg="#FFFFFF", bd=0, padx=10, pady=5,command=lambda: self.load_reserved_cars(car_container))
+        Reservations= tk.Button(nav_bar, text="Reservation", bg="#333333", fg="#FFFFFF", bd=0, padx=10, pady=5,command=lambda: self.load_reservation(car_container))
         home_btn.pack(side="left")
-        rentals_btn.pack(side="left")
+        Reservations.pack(side="left")
 
 
         logout_btn = tk.Button(nav_bar, text="Logout", bg="#333333", fg="#FFFFFF", bd=0, padx=10, pady=5, command=self.logout)
@@ -126,25 +142,26 @@ class HomePage(tk.Tk):
             card.grid(row=row, column=col, padx=110, pady=10, sticky="nw")
 
 
-    def load_reserved_cars(self,container):
+   
+    def load_reservation(self,container):
+    # Clear the current frame
+        
         for widget in container.winfo_children():
             if isinstance(widget,CarCard):
                 widget.destroy()
 
-        
-        cars=Database.Connection.get_reserved_cars()
+    # Retrieve the rental information from the database
+        rental_info = Database.Connection.get_rentals()
 
-        for i,car in enumerate(cars):
-            matricule, model , image_path = car[0] , car[1], car[2]
-
-            card = CarCard(container,matricule,model,image_path,"Reserver")
-            row = i//3
-            col = i% 3
-            card.grid(row=row, column=col, padx=110, pady=10, sticky="nw")
-
-            
-
-                
+        if not rental_info:
+            # Display a message if there are no rentals
+             message_label = tk.Label(self, text="No rentals found", font=('Helvetica', 14), bg='#F0F0F0')
+             message_label.pack(expand=True)
+        else:
+        # Display the rental information in separate frames
+            for info in rental_info:
+                reservation_frame = Reservation(self, info)
+                reservation_frame.pack(side='left', padx=10, pady=10)
 
     def logout(self):
         self.destroy()

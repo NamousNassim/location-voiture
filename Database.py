@@ -70,3 +70,12 @@ class Connection:
             return bool(result[0])
         else:
             return False
+    @staticmethod
+    def get_rentals():
+        query = "SELECT * from reservation"
+        with Connection() as cursor:
+            cursor.execute(query)
+            result = cursor.fetchall()
+        return result
+    
+   

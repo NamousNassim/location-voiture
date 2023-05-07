@@ -23,6 +23,10 @@ Installation:
 ![Register_Page.py](ScreenShots/Register_Page.png)
 ![Home_Page (Rental Button Clicked)](ScreenShots/Home_Page_Rentals.png)
 ![Main_Page_(Home Button Clicked)](ScreenShots/Home_Page(Home).png)
+![Update](ScreenShots/update1.png)
+![Update](ScreenShots/update2.png)
+![Update](ScreenShots/update3.png)
+![Update](ScreenShots/update4.png)
 
 #  Main_Page.py Documentation (Fr) :
     
